@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Company, Person
+from .models import Company, Person, CompanyEmployee
 
 
 class PersonOneSerializer(serializers.ModelSerializer):
@@ -11,17 +11,19 @@ class PersonOneSerializer(serializers.ModelSerializer):
             'id',
             'first_name',
             'second_name',
-            'profile_link',
             'created_on',
         ]
 
 
 class PersonPutSerializer(serializers.HyperlinkedModelSerializer):
+    first_name = serializers.CharField(required=False)
+    second_name = serializers.CharField(required=False)
 
     class Meta:
         model = Person
         fields = (
-            'profile_link',
+            'first_name',
+            'second_name',
         )
 
 
@@ -50,7 +52,6 @@ class CompanyOneSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'description',
-            'employees',
             'created_on',
         ]
 
@@ -67,11 +68,31 @@ class CompanyPutSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class CompanyEmployeeSerializer(serializers.ModelSerializer):
+    employee = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CompanyEmployee
+
+        fields = [
+            'company',
+            'employee',
+
+            'work_start_dt',
+            'work_end_dt'
+        ]
+
+    def get_employee(self, obj):
+        employees = PersonOneSerializer(Person.objects.get(id=obj.id))
+        return employees.data
+
+
 class CompanyListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='one_company',
         lookup_field='id'
     )
+    company_employee = serializers.SerializerMethodField()
 
     class Meta:
         model = Company
@@ -80,5 +101,10 @@ class CompanyListSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'name',
+            'company_employee',
             'description',
         ]
+
+    def get_company_employee(self, obj):
+        companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj), many=True)
+        return companies_employees.data

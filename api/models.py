@@ -23,7 +23,7 @@ class Company(models.Model):
 
 class CompanyEmployee(models.Model):
     company = models.ForeignKey(Company, related_name='company_employee', on_delete=models.CASCADE)
-    employee = models.ForeignKey(Company, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     work_start_dt = models.DateField(auto_now_add=False, auto_now=False)
     work_end_dt = models.DateField(auto_now_add=False, auto_now=False, null=True, blank=True)
