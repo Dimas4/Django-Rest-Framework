@@ -4,11 +4,17 @@ from .models import Company, Person, CompanyEmployee
 
 
 class PersonOneSerializer(serializers.ModelSerializer):
+    company_url = serializers.HyperlinkedIdentityField(
+        view_name='one_company',
+        lookup_field='id'
+    )
+
     class Meta:
         model = Person
 
         fields = [
             'id',
+            'company_url',
             'first_name',
             'second_name',
             'created_on',
@@ -83,7 +89,7 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def get_employee(self, obj):
-        employees = PersonOneSerializer(Person.objects.get(id=obj.id))
+        employees = PersonOneSerializer(Person.objects.get(id=obj.id), context = {'request': self.context.get("request")})
         return employees.data
 
 
@@ -106,5 +112,6 @@ class CompanyListSerializer(serializers.ModelSerializer):
         ]
 
     def get_company_employee(self, obj):
-        companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj), many=True)
+        companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
+                                                        many=True, context = {'request': self.context.get("request")})
         return companies_employees.data
