@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import Http404
 
 from .serializers import PersonOneSerializer, PersonListSerializer, PersonPutSerializer, CompanyOneSerializer, CompanyListSerializer, CompanyPutSerializer
@@ -33,7 +35,17 @@ class CompanyOneAPIView(APIView):
 class CompanyListAPIView(APIView):
     def get(self, request):
         profiles = Company.objects.all()
-        serializer = CompanyListSerializer(profiles, many=True, context={'request': request})
+        paginator = Paginator(profiles, 3)
+        page = request.GET.get('page')
+
+        try:
+            cart_details = paginator.page(page)
+        except PageNotAnInteger:
+            cart_details = paginator.page(1)
+        except EmptyPage:
+            cart_details = paginator.page(paginator.num_pages)
+
+        serializer = CompanyListSerializer(cart_details, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request):
