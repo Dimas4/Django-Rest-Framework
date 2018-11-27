@@ -1,0 +1,357 @@
+swagger: '2.0'
+info:
+  title: Company-Employee API
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+  - http
+basePath: /api
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /company/:
+    get:
+      operationId: company_list
+      description: ''
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/CompanyList'
+      tags:
+        - company
+    post:
+      operationId: company_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CompanyList'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CompanyList'
+      tags:
+        - company
+    parameters: []
+  /company/(P{id}d+):
+    get:
+      operationId: company_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/CompanyOne'
+      tags:
+        - company
+    put:
+      operationId: company_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CompanyOne'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/CompanyOne'
+      tags:
+        - company
+    patch:
+      operationId: company_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CompanyOne'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/CompanyOne'
+      tags:
+        - company
+    delete:
+      operationId: company_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - company
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this company.
+        required: true
+        type: integer
+  /employee/:
+    get:
+      operationId: employee_list
+      description: ''
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/PersonList'
+      tags:
+        - employee
+    post:
+      operationId: employee_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PersonList'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PersonList'
+      tags:
+        - employee
+    parameters: []
+  /employee/(P{id}d+):
+    get:
+      operationId: employee_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/PersonOne'
+      tags:
+        - employee
+    put:
+      operationId: employee_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PersonOne'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/PersonOne'
+      tags:
+        - employee
+    patch:
+      operationId: employee_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PersonOne'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/PersonOne'
+      tags:
+        - employee
+    delete:
+      operationId: employee_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - employee
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this person.
+        required: true
+        type: integer
+definitions:
+  CompanyList:
+    required:
+      - name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      url:
+        title: Url
+        type: string
+        format: uri
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 50
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+  CompanyOne:
+    required:
+      - name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      url:
+        title: Url
+        type: string
+        format: uri
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 50
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+      company_employee:
+        title: Company employee
+        type: string
+        readOnly: true
+      created_on:
+        title: Created on
+        type: string
+        format: date-time
+        readOnly: true
+  PersonList:
+    required:
+      - first_name
+      - second_name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      url:
+        title: Url
+        type: string
+        format: uri
+        readOnly: true
+      first_name:
+        title: First name
+        type: string
+        maxLength: 50
+        minLength: 1
+      second_name:
+        title: Second name
+        type: string
+        maxLength: 50
+        minLength: 1
+  PersonOne:
+    required:
+      - first_name
+      - second_name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      url:
+        title: Url
+        type: string
+        format: uri
+        readOnly: true
+      first_name:
+        title: First name
+        type: string
+        maxLength: 50
+        minLength: 1
+      second_name:
+        title: Second name
+        type: string
+        maxLength: 50
+        minLength: 1
+      created_on:
+        title: Created on
+        type: string
+        format: date-time
+        readOnly: true
