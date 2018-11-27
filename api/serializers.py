@@ -1,24 +1,8 @@
+from django.core.paginator import Paginator
+
 from rest_framework import serializers
 
 from .models import Company, Person, CompanyEmployee
-
-
-class PersonOneSerializer(serializers.ModelSerializer):
-    company_url = serializers.HyperlinkedIdentityField(
-        view_name='one_company',
-        lookup_field='id'
-    )
-
-    class Meta:
-        model = Person
-
-        fields = [
-            'id',
-            'company_url',
-            'first_name',
-            'second_name',
-            'created_on',
-        ]
 
 
 class PersonListSerializer(serializers.ModelSerializer):
@@ -38,6 +22,13 @@ class PersonListSerializer(serializers.ModelSerializer):
         ]
 
 
+class PersonOneSerializer(PersonListSerializer):
+    class Meta(PersonListSerializer.Meta):
+        fields = PersonListSerializer.Meta.fields + [
+            'created_on'
+        ]
+
+
 class CompanyEmployeeSerializer(serializers.ModelSerializer):
     employee = serializers.SerializerMethodField()
 
@@ -45,7 +36,6 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         model = CompanyEmployee
 
         fields = [
-            'company',
             'employee',
 
             'work_start_dt',
@@ -53,20 +43,8 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def get_employee(self, obj):
-        employees = PersonOneSerializer(Person.objects.get(id=obj.id), context = {'request': self.context.get("request")})
+        employees = PersonOneSerializer(Person.objects.get(id=obj.id), context={'request': self.context.get("request")})
         return employees.data
-
-
-class CompanyOneSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Company
-
-        fields = [
-            'id',
-            'name',
-            'description',
-            'created_on',
-        ]
 
 
 class CompanyListSerializer(serializers.ModelSerializer):
@@ -74,7 +52,6 @@ class CompanyListSerializer(serializers.ModelSerializer):
         view_name='one_company',
         lookup_field='id'
     )
-    company_employee = serializers.SerializerMethodField()
 
     class Meta:
         model = Company
@@ -83,8 +60,17 @@ class CompanyListSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'name',
-            'company_employee',
             'description',
+        ]
+
+
+class CompanyOneSerializer(CompanyListSerializer):
+    company_employee = serializers.SerializerMethodField()
+
+    class Meta(CompanyListSerializer.Meta):
+        fields = CompanyListSerializer.Meta.fields + [
+            'company_employee',
+            'created_on',
         ]
 
     def get_company_employee(self, obj):
