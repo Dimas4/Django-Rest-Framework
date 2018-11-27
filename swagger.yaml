@@ -71,7 +71,7 @@ paths:
       tags:
         - company
     parameters: []
-  /company/(P{id}d+):
+  /company/{id}:
     get:
       operationId: company_read
       description: ''
@@ -185,7 +185,7 @@ paths:
       tags:
         - employee
     parameters: []
-  /employee/(P{id}d+):
+  /employee/{id}:
     get:
       operationId: employee_read
       description: ''

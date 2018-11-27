@@ -5,9 +5,9 @@ from .views import PersonOneAPIView, PersonListAPIView, CompanyOneAPIView, Compa
 
 
 urlpatterns = [
-    re_path('^company/(?P<id>\d+)', CompanyOneAPIView.as_view(), name='one_company'),
+    re_path('^company/(?P<id>\d+)$', CompanyOneAPIView.as_view(), name='one_company'),
     path('company/', CompanyListAPIView.as_view(), name='company'),
 
-    re_path('^employee/(?P<id>\d+)', PersonOneAPIView.as_view(), name='one_employee'),
+    re_path('^employee/(?P<id>\d+)$', PersonOneAPIView.as_view(), name='one_employee'),
     path('employee/', PersonListAPIView.as_view(), name='employees')
 ]
