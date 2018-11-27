@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 
 from rest_framework import serializers
 
+
 from .models import Company, Person, CompanyEmployee
 
 
@@ -76,4 +77,5 @@ class CompanyOneSerializer(CompanyListSerializer):
     def get_company_employee(self, obj):
         companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
                                                         many=True, context={'request': self.context.get("request")})
+
         return companies_employees.data
