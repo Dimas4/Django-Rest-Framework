@@ -1,6 +1,7 @@
-FROM python:3
-RUN mkdir /code
-WORKDIR /code
-ADD requirements.txt /code/
+FROM python:3.6
+
+COPY requirements.txt /app/requirements.txt
+WORKDIR /app
 RUN pip install -r requirements.txt
-ADD . /code/
+
+COPY . /app
