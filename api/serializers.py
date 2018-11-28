@@ -1,9 +1,7 @@
-from django.core.paginator import Paginator
-
 from rest_framework import serializers
 
 
-from .models import Company, Person, CompanyEmployee
+from .models import Company, Person, CompanyEmployee, Salary
 
 
 class PersonListSerializer(serializers.ModelSerializer):
@@ -44,7 +42,7 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def get_employee(self, obj):
-        employees = PersonOneSerializer(Person.objects.get(id=obj.id), context={'request': self.context.get("request")})
+        employees = PersonOneSerializer(Person.objects.get(id=obj.employee.id), context={'request': self.context.get("request")})
         return employees.data
 
 
@@ -66,7 +64,10 @@ class CompanyListSerializer(serializers.ModelSerializer):
 
 
 class CompanyOneSerializer(CompanyListSerializer):
-    company_employee = serializers.SerializerMethodField()
+    company_employee = serializers.HyperlinkedIdentityField(
+        view_name='one_employee_by_company_id',
+        lookup_field='id'
+    )
 
     class Meta(CompanyListSerializer.Meta):
         fields = CompanyListSerializer.Meta.fields + [
@@ -74,8 +75,26 @@ class CompanyOneSerializer(CompanyListSerializer):
             'created_on',
         ]
 
-    def get_company_employee(self, obj):
-        companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
-                                                        many=True, context={'request': self.context.get("request")})
+    # def get_company_employee(self, obj):
+    #     companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
+    #                                                     many=True, context={'request': self.context.get("request")})
+    #
+    #     return companies_employees.data
 
+
+class SalaryListSerializer(serializers.ModelSerializer):
+    company = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Salary
+
+        fields = [
+            'company',
+            'salary',
+            'month'
+        ]
+
+    def get_company(self, obj):
+        companies_employees = obj.company_employee.company
+        companies_employees = CompanyListSerializer(companies_employees, context={'request': self.context.get("request")})
         return companies_employees.data
