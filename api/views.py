@@ -1,7 +1,11 @@
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import generics, mixins
+import datetime
 
-from django.db.models import Q
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework import generics, mixins
+from rest_framework.views import APIView
+
+from django.db.models import Q, Sum
 
 from .models import Company, Person, CompanyEmployee, Salary
 from .serializers import (
@@ -10,8 +14,7 @@ from .serializers import (
     CompanyOneSerializer,
     CompanyListSerializer,
     CompanyEmployeeSerializer,
-    SalaryListSerializer
-
+    SalaryOneSerializer
 )
 
 
@@ -79,16 +82,11 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class SalaryListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
-    serializer_class = SalaryListSerializer
-    pagination_class = LimitOffsetPagination
+class SalaryListAPIView(APIView):
+    def get(self, request, id):
+        qs = Salary.objects.filter(company_employee__employee__id=id) \
+            .filter(month__gte=datetime.datetime.now() - datetime.timedelta(days=365)) \
+            .aggregate(salary=Sum('salary'))
 
-    def get_queryset(self):
-        qs = Salary.objects.filter(company_employee__employee__id=self.kwargs['id'])
-        return qs
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        serializer = SalaryOneSerializer(qs)
+        return Response(serializer.data)

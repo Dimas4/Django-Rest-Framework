@@ -82,19 +82,10 @@ class CompanyOneSerializer(CompanyListSerializer):
     #     return companies_employees.data
 
 
-class SalaryListSerializer(serializers.ModelSerializer):
-    company = serializers.SerializerMethodField()
-
+class SalaryOneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Salary
 
         fields = [
-            'company',
             'salary',
-            'month'
         ]
-
-    def get_company(self, obj):
-        companies_employees = obj.company_employee.company
-        companies_employees = CompanyListSerializer(companies_employees, context={'request': self.context.get("request")})
-        return companies_employees.data
