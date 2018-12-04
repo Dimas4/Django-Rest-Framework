@@ -40,3 +40,12 @@ class Salary(models.Model):
 
     def __str__(self):
         return f"<Salary salary={self.salary} month={self.month}>"
+
+
+class SalaryCache(models.Model):
+    employee = models.ForeignKey(Person, on_delete=models.CASCADE)
+
+    salary = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return f"<SalaryCache salary={self.salary}>"

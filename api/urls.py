@@ -20,5 +20,4 @@ urlpatterns = [
     path('employee/', PersonListAPIView.as_view(), name='employees'),
 
     re_path('^salary/(?P<id>\d+)$', SalaryListAPIView.as_view(), name='salary'),
-
 ]

@@ -74,27 +74,3 @@ class CompanyOneSerializer(CompanyListSerializer):
             'company_employee',
             'created_on',
         ]
-
-    # def get_company_employee(self, obj):
-    #     companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
-    #                                                     many=True, context={'request': self.context.get("request")})
-    #
-    #     return companies_employees.data
-
-
-class SalaryListSerializer(serializers.ModelSerializer):
-    company = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Salary
-
-        fields = [
-            'company',
-            'salary',
-            'month'
-        ]
-
-    def get_company(self, obj):
-        companies_employees = obj.company_employee.company
-        companies_employees = CompanyListSerializer(companies_employees, context={'request': self.context.get("request")})
-        return companies_employees.data
