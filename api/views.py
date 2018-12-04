@@ -3,14 +3,30 @@ from rest_framework import generics, mixins
 
 from django.db.models import Q
 
-from .serializers import PersonOneSerializer, PersonListSerializer, CompanyOneSerializer, CompanyListSerializer
-from .models import Company, Person
+from .serializers import PersonOneSerializer, PersonListSerializer, CompanyOneSerializer, CompanyListSerializer, CompanyEmployeeSerializer
+from .models import Company, Person, CompanyEmployee
 
 
 class CompanyOneAPIView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
     queryset = Company.objects.all()
     serializer_class = CompanyOneSerializer
+
+
+class PersonsByCompanyIdAPIView(mixins.CreateModelMixin, generics.ListAPIView):
+    serializer_class = CompanyEmployeeSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        id = self.kwargs['id']
+        qs = CompanyEmployee.objects.filter(company__id=id)
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class CompanyListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
