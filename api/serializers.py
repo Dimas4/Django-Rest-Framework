@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-from .models import Company, Person, CompanyEmployee
+from .models import Company, Person, CompanyEmployee, Salary
 
 
 class PersonListSerializer(serializers.ModelSerializer):
@@ -74,9 +74,3 @@ class CompanyOneSerializer(CompanyListSerializer):
             'company_employee',
             'created_on',
         ]
-
-    # def get_company_employee(self, obj):
-    #     companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
-    #                                                     many=True, context={'request': self.context.get("request")})
-    #
-    #     return companies_employees.data

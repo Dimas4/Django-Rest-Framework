@@ -1,10 +1,19 @@
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 from rest_framework import generics, mixins
+from rest_framework.views import APIView
 
 from django.db.models import Q
 
-from .serializers import PersonOneSerializer, PersonListSerializer, CompanyOneSerializer, CompanyListSerializer, CompanyEmployeeSerializer
 from .models import Company, Person, CompanyEmployee
+from celery_tasks.tasks import add_to_salary_cached
+from .serializers import (
+    PersonOneSerializer,
+    PersonListSerializer,
+    CompanyOneSerializer,
+    CompanyListSerializer,
+    CompanyEmployeeSerializer,
+)
 
 
 class CompanyOneAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -69,3 +78,9 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class SalaryListAPIView(APIView):
+    def get(self, request, id):
+        add_to_salary_cached.delay(id)
+        return Response({'status': 'ok'})
