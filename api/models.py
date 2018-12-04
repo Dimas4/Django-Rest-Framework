@@ -1,3 +1,5 @@
+from django.contrib.sites.models import Site
+from django.urls import reverse
 from django.db import models
 
 
@@ -16,6 +18,9 @@ class Company(models.Model):
     description = models.TextField(blank=True, null=True)
 
     created_on = models.DateTimeField(auto_now_add=True)
+
+    def employee_url(self):
+        return reverse("admin:api_companyemployee_changelist") + f'?q={self.id}'
 
     def __str__(self):
         return f"<Company(name={self.name})>"
