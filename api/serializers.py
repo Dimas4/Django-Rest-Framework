@@ -75,12 +75,6 @@ class CompanyOneSerializer(CompanyListSerializer):
             'created_on',
         ]
 
-    # def get_company_employee(self, obj):
-    #     companies_employees = CompanyEmployeeSerializer(CompanyEmployee.objects.filter(company=obj),
-    #                                                     many=True, context={'request': self.context.get("request")})
-    #
-    #     return companies_employees.data
-
 
 class SalaryOneSerializer(serializers.ModelSerializer):
     class Meta:

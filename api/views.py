@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from django.db.models import Q, Sum
 
-from .models import Company, Person, CompanyEmployee, Salary
+from .models import Company, Person, CompanyEmployee, Salary, SalaryCache
 from .serializers import (
     PersonOneSerializer,
     PersonListSerializer,
@@ -87,6 +87,14 @@ class SalaryListAPIView(APIView):
         qs = Salary.objects.filter(company_employee__employee__id=id) \
             .filter(month__gte=datetime.datetime.now() - datetime.timedelta(days=365)) \
             .aggregate(salary=Sum('salary'))
+
+        try:
+            salary_cache = SalaryCache.objects.get(employee__id=id)
+            salary_cache.delete()
+        except SalaryCache.DoesNotExist:
+            print('Does not exist')
+
+        SalaryCache.objects.create(employee=Person.objects.get(id=id), salary=qs['salary'])
 
         serializer = SalaryOneSerializer(qs)
         return Response(serializer.data)
