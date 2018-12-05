@@ -1,5 +1,6 @@
 from django.utils.html import format_html
 from django.contrib import admin
+from django.urls import reverse
 
 from .models import Company, Person, CompanyEmployee, Salary, SalaryCache
 
@@ -16,6 +17,16 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class EmployeeAdmin(admin.ModelAdmin):
     search_fields = ('second_name', 'first_name',)
+    readonly_fields = ('show_annual_salary',)
+
+    def show_annual_salary(self, obj):
+        salary = SalaryCache.objects.filter(employee=obj)
+        if salary.exists():
+            return SalaryCache.objects.filter(employee=obj).first().salary
+        return format_html('Make a request to add an annual salary: <a href="%s">%s</a>' %
+                           (reverse("salary", kwargs={'id': obj.id}), reverse("salary", kwargs={'id': obj.id})))
+
+    show_annual_salary.allow_tags = True
 
 
 class SalaryAdmin(admin.ModelAdmin):
