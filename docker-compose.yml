@@ -6,3 +6,36 @@ services:
     command: python3 manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
+    links:
+    - redis
+    - celery
+    volumes:
+      - .:/usr/src/app:ro
+
+  celery:
+    build: .
+    command: celery -A celery_tasks.celery_app worker -l info
+    volumes:
+    - .:/usr/src/app:ro
+    links:
+    - redis
+
+  redis:
+    image: redis:4.0.5-alpine
+    ports:
+    - "6379:6379"
+
+  db:
+    image: postgres:latest
+#    build: ./database/
+    environment:
+    - POSTGRES_USER=useruser
+    - POSTGRES_PASSWORD=useruser
+    - POSTGRES_DATABASE=testdb
+    ports:
+    - "5432:5432"
+
+#    volumes:
+#      - ./data/postgres:/var/lib/postgresql/data
+
+#    env_file: .env
