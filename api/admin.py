@@ -1,6 +1,5 @@
 from django.utils.html import format_html
 from django.contrib import admin
-from django.urls import reverse
 
 from .models import Company, Person, CompanyEmployee, Salary, SalaryCache
 
@@ -24,7 +23,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         if salary.exists():
             return SalaryCache.objects.filter(employee=obj).first().salary
         return format_html('Make a request to add an annual salary: <a href="%s">%s</a>' %
-                           (reverse("salary", kwargs={'id': obj.id}), reverse("salary", kwargs={'id': obj.id})))
+                           (obj.get_annual_salary_url(), obj.get_annual_salary_url()))
 
     show_annual_salary.allow_tags = True
 

@@ -8,6 +8,9 @@ class Person(models.Model):
 
     created_on = models.DateTimeField(auto_now_add=True)
 
+    def get_annual_salary_url(self):
+        return reverse("salary", kwargs={'id': self.id})
+
     def __str__(self):
         return f"<Employee(name={self.first_name} {self.second_name})>"
 
