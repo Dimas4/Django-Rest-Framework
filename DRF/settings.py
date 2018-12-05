@@ -67,8 +67,12 @@ WSGI_APPLICATION = 'DRF.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'testdbb',
+        'USER': 'useruser',
+        'PASSWORD': 'useruser',
+        'HOST': '172.17.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -77,7 +81,20 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-REDIS_HOST = 'localhost'
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://172.17.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+REDIS_HOST = '172.17.0.1'
 REDIS_PORT = '6379'
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
