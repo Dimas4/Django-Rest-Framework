@@ -17,7 +17,5 @@ def add_to_salary_cached(id):
         salary_cache.delete()
     except SalaryCache.DoesNotExist:
         print('Does not exist')
-    print(qs)
-    print(qs)
-    print(qs['salary'])
+
     SalaryCache.objects.create(employee=Person.objects.get(id=id), salary=qs['salary'])
