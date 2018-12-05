@@ -1,4 +1,3 @@
-from django.contrib.sites.models import Site
 from django.urls import reverse
 from django.db import models
 
