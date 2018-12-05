@@ -81,6 +81,6 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 
 class SalaryListAPIView(APIView):
-    def get(self, request, id):
+    def post(self, request, id):
         add_to_salary_cached.delay(id)
         return Response({'status': 'ok'})
