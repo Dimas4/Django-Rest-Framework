@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     links:
@@ -31,7 +31,7 @@ services:
     environment:
     - POSTGRES_USER=useruser
     - POSTGRES_PASSWORD=useruser
-    - POSTGRES_DATABASE=testdb
+    - POSTGRES_DB=testdbb
     ports:
     - "5432:5432"
 

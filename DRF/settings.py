@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'DRF.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'testdb',
+        'NAME': 'testdbb',
         'USER': 'useruser',
         'PASSWORD': 'useruser',
         'HOST': '172.17.0.1',

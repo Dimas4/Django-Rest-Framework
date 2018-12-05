@@ -24,11 +24,12 @@ class EmployeeAdmin(admin.ModelAdmin):
 
         if salary or salary == 0:
             return salary
-
-        return format_html('Can\'t find any salary information for this person. '
-                           'You can try again: <a href="%s">%s</a>' %
-                           (obj.get_annual_salary_url(), obj.get_annual_salary_url()))
-
+        try:
+            return format_html('Can\'t find any salary information for this person. '
+                               'You can try again: <a href="%s">%s</a>' %
+                               (obj.get_annual_salary_url(), obj.get_annual_salary_url()))
+        except Exception as err:
+            return ''
     show_annual_salary.allow_tags = True
 
 
