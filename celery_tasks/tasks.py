@@ -2,7 +2,7 @@ import pendulum
 
 from django.db.models import Sum
 
-from api.models import Salary, SalaryCache
+from api.models import Person, Salary, SalaryCache
 from .celery_app import app
 
 
@@ -17,5 +17,7 @@ def add_to_salary_cached(id):
         salary_cache.delete()
     except SalaryCache.DoesNotExist:
         print('Does not exist')
-
-    SalaryCache.objects.create(employee__id=id, salary=qs['salary'])
+    print(qs)
+    print(qs)
+    print(qs['salary'])
+    SalaryCache.objects.create(employee=Person.objects.get(id=id), salary=qs['salary'])

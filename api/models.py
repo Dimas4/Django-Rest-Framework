@@ -49,7 +49,7 @@ class Salary(models.Model):
 class SalaryCache(models.Model):
     employee = models.ForeignKey(Person, on_delete=models.CASCADE)
 
-    salary = models.PositiveSmallIntegerField()
+    salary = models.PositiveSmallIntegerField(null=True)
 
     def __str__(self):
         return f"<SalaryCache salary={self.salary}>"
