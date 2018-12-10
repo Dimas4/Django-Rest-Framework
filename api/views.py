@@ -1,12 +1,17 @@
+from datetime import datetime
+
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework import generics, mixins
 from rest_framework.views import APIView
+from rest_framework import status
 
 from django.db.models import Q
 
-from .models import Company, Person, CompanyEmployee
+from .date_validate.exception.exception import EmployeeStartWorkError, EmployeeEndWorkError
+from .models import Company, Person, CompanyEmployee, Salary
 from celery_tasks.tasks import add_to_salary_cached
+from .date_validate.validate import Validate
 from .serializers import (
     PersonOneSerializer,
     PersonListSerializer,
@@ -81,6 +86,31 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 
 class SalaryListAPIView(APIView):
-    def get(self, request, id):
-        add_to_salary_cached.delay(id)
+    def post(self, request):
+        company_employee_id = request.POST.get('company_employee_id')
+        salary = request.POST.get('salary')
+        date = request.POST.get('date')
+
+        if not company_employee_id or not salary or not date:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            dt_object = datetime.strptime(date, '%Y-%m')
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            company_employee = CompanyEmployee.objects.get(id=company_employee_id)
+        except CompanyEmployee.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            Validate.validate_employee_work(company_employee.work_start_dt, company_employee.work_end_dt, dt_object)
+        except (EmployeeStartWorkError, EmployeeEndWorkError):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        Salary.objects.update_or_create(company_employee=CompanyEmployee.objects.get(id=company_employee_id),
+                                        date=dt_object, defaults={'salary': salary})
+
+        add_to_salary_cached.delay(company_employee_id, dt_object.year)
         return Response({'status': 'ok'})

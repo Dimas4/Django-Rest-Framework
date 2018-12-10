@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.db import models
 
@@ -40,16 +43,27 @@ class Salary(models.Model):
     company_employee = models.ForeignKey(CompanyEmployee, on_delete=models.CASCADE)
 
     salary = models.PositiveSmallIntegerField()
-    month = models.DateField()
+    date = models.DateField()
+
+    class Meta:
+        unique_together = ("company_employee", "date",)
 
     def __str__(self):
-        return f"<Salary salary={self.salary} month={self.month}>"
+        return f"<Salary salary={self.salary} month={self.date}>"
 
 
 class SalaryCache(models.Model):
-    employee = models.ForeignKey(Person, on_delete=models.CASCADE)
+    company_employee = models.ForeignKey(CompanyEmployee, on_delete=models.CASCADE)
 
-    salary = models.PositiveSmallIntegerField()
+    year = models.PositiveIntegerField(
+            validators=[
+                MinValueValidator(2000),
+                MaxValueValidator(datetime.now().year)])
+
+    salary = models.PositiveSmallIntegerField(null=True)
+
+    class Meta:
+        unique_together = ("company_employee", "year",)
 
     def __str__(self):
         return f"<SalaryCache salary={self.salary}>"
