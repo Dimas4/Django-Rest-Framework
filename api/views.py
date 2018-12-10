@@ -87,15 +87,13 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class SalaryListAPIView(APIView):
     def post(self, request):
-        company_employee_id = request.POST.get('company_employee_id')
-        salary = request.POST.get('salary')
-        date = request.POST.get('date')
+        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), request.POST.get('date')
 
         if not company_employee_id or not salary or not date:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            dt_object = datetime.strptime(date, '%Y-%m')
+            datetime_object = datetime.strptime(date, '%Y-%m')
         except ValueError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -105,12 +103,12 @@ class SalaryListAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         try:
-            Validate.validate_employee_work(company_employee.work_start_dt, company_employee.work_end_dt, dt_object)
+            Validate.validate_date(company_employee.work_start_dt, company_employee.work_end_dt, datetime_object)
         except EmployeeWorkError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        Salary.objects.update_or_create(company_employee=CompanyEmployee.objects.get(id=company_employee_id),
-                                        date=dt_object, defaults={'salary': salary})
+        Salary.objects.update_or_create(company_employee=company_employee,
+                                        date=datetime_object, defaults={'salary': salary})
 
-        add_to_salary_cached.delay(company_employee_id, dt_object.year)
+        add_to_salary_cached.delay(company_employee_id, datetime_object.year)
         return Response({'status': 'ok'})
