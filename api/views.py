@@ -87,7 +87,8 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class SalaryListAPIView(APIView):
     def post(self, request):
-        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), request.POST.get('date')
+        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), \
+                                            request.POST.get('date')
 
         if not company_employee_id or not salary or not date:
             return Response(status=status.HTTP_400_BAD_REQUEST)
