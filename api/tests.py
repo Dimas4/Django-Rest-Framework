@@ -9,7 +9,7 @@ from api.models import Person, Company, CompanyEmployee, Salary, SalaryCache
 from celery_tasks.tasks import add_to_salary_cached
 
 
-class AnimalTestCase(TestCase):
+class APITestCase(TestCase):
     def setUp(self):
         nikita = Person.objects.create(first_name="Nikita", second_name="Nikita")
 
