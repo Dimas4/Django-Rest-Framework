@@ -8,7 +8,7 @@ from rest_framework import status
 
 from django.db.models import Q
 
-from .date_validate.exception.exception import EmployeeStartWorkError, EmployeeEndWorkError
+from .date_validate.exception.exception import EmployeeWorkError
 from .models import Company, Person, CompanyEmployee, Salary
 from celery_tasks.tasks import add_to_salary_cached
 from .date_validate.validate import Validate
@@ -106,7 +106,7 @@ class SalaryListAPIView(APIView):
 
         try:
             Validate.validate_employee_work(company_employee.work_start_dt, company_employee.work_end_dt, dt_object)
-        except (EmployeeStartWorkError, EmployeeEndWorkError):
+        except EmployeeWorkError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         Salary.objects.update_or_create(company_employee=CompanyEmployee.objects.get(id=company_employee_id),
