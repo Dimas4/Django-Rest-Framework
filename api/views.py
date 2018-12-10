@@ -8,10 +8,10 @@ from rest_framework import status
 
 from django.db.models import Q
 
-from .date_validate.exception.exception import EmployeeWorkError
+from .date_validation.exception.exception import EmployeeWorkError
 from .models import Company, Person, CompanyEmployee, Salary
 from celery_tasks.tasks import add_to_salary_cached
-from .date_validate.validate import Validate
+from .date_validation.validate import Validate
 from .serializers import (
     PersonOneSerializer,
     PersonListSerializer,
