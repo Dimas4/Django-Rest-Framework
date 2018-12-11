@@ -22,16 +22,27 @@ class APITestCase(TestCase):
         self.nikita_annual_salary = {}
 
         while date <= datetime.now():
+            if not self.nikita_annual_salary.get(date.year):
+                self.nikita_annual_salary[date.year] = 0
             salary = random.randint(100, 150)
             Salary.objects.create(company_employee=self.itechart_nikita, salary=salary, date=date)
-            self.nikita_annual_salary[date.year] = 0 if not self.nikita_annual_salary.get(date.year) \
-                else self.nikita_annual_salary[date.year]
+
             self.nikita_annual_salary[date.year] += salary
             date += relativedelta(months=1)
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
     def test_salarycache(self):
         for year, salary in self.nikita_annual_salary.items():
+            add_to_salary_cached.delay(self.itechart_nikita.id, year)
+
+        for year, salary in self.nikita_annual_salary.items():
+            self.assertEqual(salary,
+                             SalaryCache.objects.get(company_employee=self.itechart_nikita, year=year).salary)
+
+    @override_settings(CELERY_ALWAYS_EAGER=True)
+    def test_salarycache_data_duplicate(self):
+        for year, salary in self.nikita_annual_salary.items():
+            add_to_salary_cached.delay(self.itechart_nikita.id, year)
             add_to_salary_cached.delay(self.itechart_nikita.id, year)
 
         for year, salary in self.nikita_annual_salary.items():
