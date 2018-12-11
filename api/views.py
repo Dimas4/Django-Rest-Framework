@@ -85,8 +85,7 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class SalaryListAPIView(APIView):
     def post(self, request):
-        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), \
-                                            request.POST.get('date')
+        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), request.POST.get('date')
 
         try:
             salary_serializer = Validate.validate_salary_params(data={'company_employee_id': company_employee_id,
@@ -107,8 +106,6 @@ class SalaryListAPIView(APIView):
         except WorkDateError as err:
             return Response(data=err.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        Salary.objects.update_or_create(company_employee=company_employee,
-                                        date=dt_object, defaults={'salary': salary})
-
+        Salary.objects.update_or_create(company_employee=company_employee, date=dt_object, defaults={'salary': salary})
         add_to_salary_cached.delay(company_employee_id, dt_object.year)
         return Response({'status': 'ok'})
