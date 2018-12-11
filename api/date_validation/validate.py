@@ -48,6 +48,19 @@ class Validate:
                 raise EmployeeEndWorkError
 
     @classmethod
+    def validate_post_params(cls, params, types):
+        """
+        Checks that params type is equal to types
+
+        :param params:
+        :param types:
+        :return:
+        """
+        for _param, _type in zip(params, types):
+            _type(_param)
+
+
+    @classmethod
     def validate_date(cls, start_date, end_date, current_date):
         """
         Checks that start_date <= current_date <= end_date

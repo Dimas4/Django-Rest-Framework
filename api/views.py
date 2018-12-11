@@ -94,6 +94,11 @@ class SalaryListAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            Validate.validate_post_params([company_employee_id, salary, date], [int, int, str])
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        try:
             datetime_object = datetime.strptime(date, '%Y-%m')
         except ValueError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
