@@ -7,6 +7,7 @@ from rest_framework import status
 from django.db.models import Q
 
 from .validate.exception.exception import SalaryParamsError, WorkDateError
+from api.serializers import SalaryParamsSerializer, WorkDateSerializer
 from .models import Company, Person, CompanyEmployee, Salary
 from celery_tasks.tasks import add_to_salary_cached
 from .validate.validate import Validate
@@ -88,7 +89,8 @@ class SalaryListAPIView(APIView):
         company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), request.POST.get('date')
 
         try:
-            salary_serializer = Validate.validate_salary_params(data={'company_employee_id': company_employee_id,
+            salary_serializer = Validate.validate_by_serializer(SalaryParamsSerializer, SalaryParamsError,
+                                                                data={'company_employee_id': company_employee_id,
                                                                       'salary': salary, 'date': date})
         except SalaryParamsError as err:
             return Response(data=err.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -101,8 +103,9 @@ class SalaryListAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         try:
-            Validate.validate_work_date(data={'start_date': company_employee.work_start_dt,
-                                              'end_date': company_employee.work_end_dt, 'current_date': dt_object})
+            Validate.validate_by_serializer(WorkDateSerializer, WorkDateError,
+                                            data={'start_date': company_employee.work_start_dt,
+                                                  'end_date': company_employee.work_end_dt, 'current_date': dt_object})
         except WorkDateError as err:
             return Response(data=err.errors, status=status.HTTP_400_BAD_REQUEST)
 
