@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db import models
 
@@ -49,7 +48,7 @@ class Salary(models.Model):
         unique_together = ("company_employee", "date",)
 
     def __str__(self):
-        return f"<Salary salary={self.salary} month={self.date}>"
+        return f"<Salary salary={self.salary} date={self.date}>"
 
 
 class SalaryCache(models.Model):
@@ -62,8 +61,16 @@ class SalaryCache(models.Model):
 
     salary = models.PositiveSmallIntegerField(null=True)
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        try:
+            self.full_clean()
+        except ValidationError:
+            return
+        super().save(force_insert, force_update, using, update_fields)
+
     class Meta:
         unique_together = ("company_employee", "year",)
 
     def __str__(self):
-        return f"<SalaryCache salary={self.salary}>"
+        return f"<SalaryCache salary={self.salary} year={self.year}>"
