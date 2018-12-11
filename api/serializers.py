@@ -74,3 +74,9 @@ class CompanyOneSerializer(CompanyListSerializer):
             'company_employee',
             'created_on',
         ]
+
+
+class SalaryParamsSerializer(serializers.Serializer):
+    company_employee_id = serializers.IntegerField()
+    salary = serializers.IntegerField()
+    date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])

@@ -18,6 +18,7 @@ from .serializers import (
     CompanyOneSerializer,
     CompanyListSerializer,
     CompanyEmployeeSerializer,
+    SalaryParamsSerializer
 )
 
 
@@ -87,21 +88,16 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class SalaryListAPIView(APIView):
     def post(self, request):
+
         company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), \
                                             request.POST.get('date')
 
-        if not company_employee_id or not salary or not date:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = {'company_employee_id': company_employee_id, 'salary': salary, 'date': date}
+        salary_serializer = SalaryParamsSerializer(data=data)
+        if not salary_serializer.is_valid():
+            return Response(data=salary_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            Validate.validate_post_params([company_employee_id, salary, date], [int, int, str])
-        except ValueError:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            datetime_object = datetime.strptime(date, '%Y-%m')
-        except ValueError:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        datetime_object = salary_serializer.validated_data['date']
 
         try:
             company_employee = CompanyEmployee.objects.get(id=company_employee_id)

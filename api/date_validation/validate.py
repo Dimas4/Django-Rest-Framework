@@ -5,20 +5,6 @@ from .exception.exception import EmployeeWorkError, EmployeeStartWorkError, Empl
 
 class Validate:
     @classmethod
-    def _from_date_to_datetime(cls, date):
-        """
-        Converts date to datetime
-
-        :param date:
-        :return: datetime
-        """
-        return datetime(
-            year=date.year,
-            month=date.month,
-            day=1,
-        )
-
-    @classmethod
     def _validate_work_start(cls, start_date, current_date):
         """
         Checks that current_date >= start_date
@@ -27,9 +13,8 @@ class Validate:
         :param current_date:
         :raise: EmployeeStartWorkError if current_date <= start_date
         """
-        _work_start_datetime = cls._from_date_to_datetime(start_date)
 
-        if not current_date >= _work_start_datetime:
+        if not current_date >= start_date:
             raise EmployeeStartWorkError
 
     @classmethod
@@ -42,23 +27,8 @@ class Validate:
         :raise: EmployeeEndWorkError if current_date >= end_date
         """
         if end_date:
-            _work_end_datetime = cls._from_date_to_datetime(end_date)
-
-            if not current_date <= _work_end_datetime:
+            if not current_date <= end_date:
                 raise EmployeeEndWorkError
-
-    @classmethod
-    def validate_post_params(cls, params, types):
-        """
-        Checks that params type is equal to types
-
-        :param params:
-        :param types:
-        :return:
-        """
-        for _param, _type in zip(params, types):
-            _type(_param)
-
 
     @classmethod
     def validate_date(cls, start_date, end_date, current_date):
