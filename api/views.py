@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework import generics, mixins
@@ -8,17 +6,16 @@ from rest_framework import status
 
 from django.db.models import Q
 
-from .date_validation.exception.exception import EmployeeWorkError
 from .models import Company, Person, CompanyEmployee, Salary
 from celery_tasks.tasks import add_to_salary_cached
-from .date_validation.validate import Validate
 from .serializers import (
     PersonOneSerializer,
     PersonListSerializer,
     CompanyOneSerializer,
     CompanyListSerializer,
     CompanyEmployeeSerializer,
-    SalaryParamsSerializer
+    SalaryParamsSerializer,
+    WorkDateSerializer
 )
 
 
@@ -88,12 +85,11 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class SalaryListAPIView(APIView):
     def post(self, request):
-
         company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), \
                                             request.POST.get('date')
 
-        data = {'company_employee_id': company_employee_id, 'salary': salary, 'date': date}
-        salary_serializer = SalaryParamsSerializer(data=data)
+        salary_data = {'company_employee_id': company_employee_id, 'salary': salary, 'date': date}
+        salary_serializer = SalaryParamsSerializer(data=salary_data)
         if not salary_serializer.is_valid():
             return Response(data=salary_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -104,10 +100,11 @@ class SalaryListAPIView(APIView):
         except CompanyEmployee.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        try:
-            Validate.validate_date(company_employee.work_start_dt, company_employee.work_end_dt, datetime_object)
-        except EmployeeWorkError:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        work_date_date = {'start_date': company_employee.work_start_dt, 'end_date': company_employee.work_end_dt,
+                          'current_date': datetime_object}
+        work_date_serializer = WorkDateSerializer(data=work_date_date)
+        if not work_date_serializer.is_valid():
+            return Response(data=work_date_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         Salary.objects.update_or_create(company_employee=company_employee,
                                         date=datetime_object, defaults={'salary': salary})

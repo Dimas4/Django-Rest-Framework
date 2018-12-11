@@ -80,3 +80,18 @@ class SalaryParamsSerializer(serializers.Serializer):
     company_employee_id = serializers.IntegerField()
     salary = serializers.IntegerField()
     date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
+
+
+class WorkDateSerializer(serializers.Serializer):
+    start_date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
+    end_date = serializers.DateField(allow_null=True, format="%Y-%m", input_formats=['%Y-%m'])
+    current_date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
+
+    def validate(self, attrs):
+        if not attrs['current_date'] >= attrs['start_date']:
+            raise serializers.ValidationError({"date": "date must be greater than the start work date"})
+
+        if attrs['end_date']:
+            if not attrs['current_date'] <= attrs['end_date']:
+                raise serializers.ValidationError({"current_date": "date must be less than the end work date"})
+        return attrs

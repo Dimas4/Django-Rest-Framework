@@ -10,6 +10,5 @@ def add_to_salary_cached(company_employee_id, year):
         .filter(date__year=year) \
         .aggregate(salary=Sum('salary'))
 
-    company_employee = CompanyEmployee.objects.get(id=company_employee_id)
-    SalaryCache.objects.update_or_create(company_employee=company_employee, year=year,
-                                         defaults={'salary': qs['salary']})
+    SalaryCache.objects.update_or_create(company_employee=CompanyEmployee.objects.get(id=company_employee_id),
+                                         year=year, defaults={'salary': qs['salary']})
