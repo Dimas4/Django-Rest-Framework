@@ -58,7 +58,7 @@ class SalaryCache(models.Model):
     year = models.PositiveIntegerField(
             validators=[
                 MinValueValidator(2000),
-                MaxValueValidator(datetime.now().year)])
+                MaxValueValidator(2068)])
 
     salary = models.PositiveSmallIntegerField(null=True)
 

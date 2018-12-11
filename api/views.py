@@ -86,8 +86,8 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
 class SalaryListAPIView(APIView):
     def post(self, request):
-        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), request.POST.get('date')
-
+        company_employee_id, salary, date = request.POST.get('id'), request.POST.get('salary'), \
+                                            request.POST.get('date')
         try:
             salary_serializer = Validate.validate_by_serializer(SalaryParamsSerializer, SalaryParamsError,
                                                                 data={'company_employee_id': company_employee_id,
@@ -95,17 +95,17 @@ class SalaryListAPIView(APIView):
         except SalaryParamsError as err:
             return Response(data=err.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        dt_object = salary_serializer.validated_data['date']
-
         try:
             company_employee = CompanyEmployee.objects.get(id=company_employee_id)
         except CompanyEmployee.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+        dt_object = salary_serializer.validated_data['date']
         try:
             Validate.validate_by_serializer(WorkDateSerializer, WorkDateError,
                                             data={'start_date': company_employee.work_start_dt,
-                                                  'end_date': company_employee.work_end_dt, 'current_date': dt_object})
+                                                  'end_date': company_employee.work_end_dt,
+                                                  'current_date': dt_object})
         except WorkDateError as err:
             return Response(data=err.errors, status=status.HTTP_400_BAD_REQUEST)
 
