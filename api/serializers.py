@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework import serializers
 
 
@@ -80,6 +82,12 @@ class SalaryParamsSerializer(serializers.Serializer):
     company_employee_id = serializers.IntegerField()
     salary = serializers.IntegerField()
     date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
+
+    def validate(self, attrs):
+        date_field = attrs['date']
+        if not (date(year=2000, month=1, day=1) <= date_field <= date(year=2068, month=1, day=1)):
+            raise serializers.ValidationError('Date year must be between 2000 and 2068')
+        return attrs
 
 
 class WorkDateSerializer(serializers.Serializer):
