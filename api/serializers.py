@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework import serializers
 
 
@@ -87,11 +89,17 @@ class WorkDateSerializer(serializers.Serializer):
     end_date = serializers.DateField(allow_null=True, format="%Y-%m", input_formats=['%Y-%m'])
     current_date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
 
-    def validate(self, attrs):
-        if not attrs['current_date'] >= attrs['start_date']:
-            raise serializers.ValidationError({"date": "date must be greater than the start work date"})
+    def compare_dt_year_month(self, first, second):
+        if first.year < second.year:
+            return True
+        if first.year == second.year:
+            return True if first.month <= second.month else False
+        return False
 
+    def validate(self, attrs):
+        if not self.compare_dt_year_month(attrs['start_date'], attrs['current_date']):
+            raise serializers.ValidationError({"date": "date must be greater than the start work date"})
         if attrs['end_date']:
-            if not attrs['current_date'] <= attrs['end_date']:
+            if not self.compare_dt_year_month(attrs['current_date'], attrs['end_date']):
                 raise serializers.ValidationError({"current_date": "date must be less than the end work date"})
         return attrs
