@@ -44,8 +44,18 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def get_employee(self, obj):
-        employees = PersonOneSerializer(Person.objects.get(id=obj.employee.id), context={'request': self.context.get("request")})
+        employees = PersonOneSerializer(Person.objects.get(id=obj.employee.id),
+                                        context={'request': self.context.get("request")})
         return employees.data
+
+    def validate(self, attrs):
+        start_field = attrs['work_start_dt']
+        end_field = attrs.get('work_end_dt')
+        if not (date(year=2000, month=1, day=1) <= start_field <= date(year=2068, month=1, day=1)):
+            raise serializers.ValidationError('Year must be between 2000 and 2068')
+        if end_field > date.today():
+            raise serializers.ValidationError('Date must be in the past')
+        return attrs
 
 
 class CompanyListSerializer(serializers.ModelSerializer):
@@ -86,7 +96,7 @@ class SalaryParamsSerializer(serializers.Serializer):
     def validate(self, attrs):
         date_field = attrs['date']
         if not (date(year=2000, month=1, day=1) <= date_field <= date(year=2068, month=1, day=1)):
-            raise serializers.ValidationError('Date year must be between 2000 and 2068')
+            raise serializers.ValidationError('Year must be between 2000 and 2068')
         return attrs
 
 
