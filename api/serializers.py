@@ -53,14 +53,9 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         start_field = attrs['work_start_dt']
         end_field = attrs.get('work_end_dt')
-        after_100_years = date.today().year + 100
-        if not (date(year=2000, month=1, day=1)
-                <= start_field <=
-                date(year=after_100_years, month=1, day=1)
-                ):
-
+        if not (date(year=2000, month=1, day=1) <= start_field):
             raise serializers.ValidationError(
-                f'Year must be between 2000 and {after_100_years}'
+                f'Year must be more than 2000'
             )
         if end_field > date.today():
             raise serializers.ValidationError('Date must be in the past')
@@ -104,14 +99,10 @@ class SalaryParamsSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         date_field = attrs['date']
-        after_100_years = date.today().year + 100
-        if not (date(year=2000, month=1, day=1)
-                <= date_field <=
-                date(year=after_100_years, month=1, day=1)
-                ):
+        if not (date(year=2000, month=1, day=1) <= date_field):
 
             raise serializers.ValidationError(
-                f'Year must be between 2000 and {after_100_years}'
+                f'Year must be more than 2000'
             )
         return attrs
 
