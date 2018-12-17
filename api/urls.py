@@ -23,10 +23,9 @@ urlpatterns = [
             name='one_employee'
             ),
 
-    re_path('^employees_by_company_id/(?P<id>\d+)$',
+    re_path('^company/(?P<id>\d+)/employee$',
             PersonsByCompanyIdAPIView.as_view(),
-            name='one_employee_by_company_id'
-            ),
+            name='one_employee_by_company_id'),
 
     path('employee/', PersonListAPIView.as_view(), name='employees'),
 
