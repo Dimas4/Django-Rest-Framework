@@ -44,15 +44,21 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def get_employee(self, obj):
-        employees = PersonOneSerializer(Person.objects.get(id=obj.employee.id),
-                                        context={'request': self.context.get("request")})
+        employees = PersonOneSerializer(
+            Person.objects.get(id=obj.employee.id),
+            context={'request': self.context.get("request")}
+        )
         return employees.data
 
     def validate(self, attrs):
         start_field = attrs['work_start_dt']
         end_field = attrs.get('work_end_dt')
-        if not (date(year=2000, month=1, day=1) <= start_field <= date(year=2068, month=1, day=1)):
-            raise serializers.ValidationError('Year must be between 2000 and 2068')
+        if not (date(year=2000, month=1, day=1) <= start_field <=
+                date(year=2068, month=1, day=1)):
+
+            raise serializers.ValidationError(
+                f'Year must be between 2000 and 2068'
+            )
         if end_field > date.today():
             raise serializers.ValidationError('Date must be in the past')
         return attrs
@@ -95,15 +101,26 @@ class SalaryParamsSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         date_field = attrs['date']
-        if not (date(year=2000, month=1, day=1) <= date_field <= date(year=2068, month=1, day=1)):
-            raise serializers.ValidationError('Year must be between 2000 and 2068')
+        if not (date(year=2000, month=1, day=1) <= date_field <=
+                date(year=2068, month=1, day=1)):
+
+            raise serializers.ValidationError(
+                f'Year must be between 2000 and 2068'
+            )
         return attrs
 
 
 class WorkDateSerializer(serializers.Serializer):
     start_date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
-    end_date = serializers.DateField(allow_null=True, format="%Y-%m", input_formats=['%Y-%m'])
-    current_date = serializers.DateField(format="%Y-%m", input_formats=['%Y-%m'])
+    end_date = serializers.DateField(
+        allow_null=True,
+        format="%Y-%m",
+        input_formats=['%Y-%m']
+    )
+    current_date = serializers.DateField(
+        format="%Y-%m",
+        input_formats=['%Y-%m']
+    )
 
     def compare_dt_year_month(self, first, second):
         if first.year < second.year:
@@ -113,9 +130,17 @@ class WorkDateSerializer(serializers.Serializer):
         return False
 
     def validate(self, attrs):
-        if not self.compare_dt_year_month(attrs['start_date'], attrs['current_date']):
-            raise serializers.ValidationError({"date": "date must be greater than the start work date"})
+        if not self.compare_dt_year_month(
+                attrs['start_date'],
+                attrs['current_date']):
+            raise serializers.ValidationError(
+                {"date": "date must be greater than the start work date"}
+            )
         if attrs['end_date']:
-            if not self.compare_dt_year_month(attrs['current_date'], attrs['end_date']):
-                raise serializers.ValidationError({"current_date": "date must be less than the end work date"})
+            if not self.compare_dt_year_month(
+                    attrs['current_date'],
+                    attrs['end_date']):
+                raise serializers.ValidationError(
+                    {"current_date": "date must be less than the end work date"}
+                )
         return attrs

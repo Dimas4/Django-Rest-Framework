@@ -9,7 +9,9 @@ class CompanyAdmin(admin.ModelAdmin):
     readonly_fields = ('show_employee_url',)
 
     def show_employee_url(self, obj):
-        return format_html('<a href="%s">%s</a>' % (obj.employee_url(), obj.employee_url()))
+        return format_html(
+            '<a href="%s">%s</a>' % (obj.employee_url(), obj.employee_url())
+        )
 
     show_employee_url.allow_tags = True
 
