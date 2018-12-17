@@ -67,4 +67,15 @@ class Migration(migrations.Migration):
             name='salarycache',
             unique_together={('company_employee', 'year')},
         ),
+        migrations.AlterUniqueTogether(
+            name='salary',
+            unique_together={('company_employee', 'date')},
+        ),
+        migrations.AlterField(
+            model_name='salarycache',
+            name='year',
+            field=models.PositiveIntegerField(
+                validators=[django.core.validators.MinValueValidator(2000),
+                            django.core.validators.MaxValueValidator(2068)]),
+        ),
     ]
