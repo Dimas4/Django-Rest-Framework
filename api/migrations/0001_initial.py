@@ -48,4 +48,65 @@ class Migration(migrations.Migration):
                 ('month', models.DateField()),
             ],
         ),
+        migrations.AddField(
+            model_name='salary',
+            name='company_employee',
+            field=models.ForeignKey(default=1,
+                                    on_delete=django.db.models.deletion.CASCADE,
+                                    to='api.CompanyEmployee'),
+            preserve_default=False,
+        ),
+        migrations.AlterField(
+            model_name='companyemployee',
+            name='work_end_dt',
+            field=models.DateTimeField(blank=True, null=True),
+        ),
+        migrations.AlterField(
+            model_name='companyemployee',
+            name='work_end_dt',
+            field=models.DateField(blank=True, null=True),
+        ),
+        migrations.AlterField(
+            model_name='companyemployee',
+            name='work_start_dt',
+            field=models.DateField(),
+        ),
+        migrations.AlterField(
+            model_name='companyemployee',
+            name='employee',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    to='api.Person'),
+        ),
+        migrations.CreateModel(
+            name='SalaryCache',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
+                ('salary', models.PositiveSmallIntegerField()),
+                ('employee',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   to='api.Person')),
+            ],
+        ),
+        migrations.AlterField(
+            model_name='salary',
+            name='salary',
+            field=models.PositiveSmallIntegerField(null=True),
+        ),
+        migrations.AlterField(
+            model_name='salary',
+            name='salary',
+            field=models.PositiveSmallIntegerField(blank=True, null=True),
+        ),
+        migrations.AlterField(
+            model_name='salary',
+            name='salary',
+            field=models.PositiveSmallIntegerField(default=1),
+            preserve_default=False,
+        ),
+        migrations.AlterField(
+            model_name='salarycache',
+            name='salary',
+            field=models.PositiveSmallIntegerField(null=True),
+        ),
     ]
