@@ -30,8 +30,8 @@ class EmployeeAdmin(admin.ModelAdmin):
         annual_salary_url = obj.get_annual_salary_url()
         return format_html(
             f'Can\'t find any salary information for this person. '
-            f'You can try again: <a href={annual_salary_url}>'
-            f'{annual_salary_url}</a>'
+            f'You can try again: '
+            f'<a href={annual_salary_url}>{annual_salary_url}</a>'
         )
 
     show_annual_salary.allow_tags = True
