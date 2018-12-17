@@ -29,18 +29,30 @@ class Company(models.Model):
 
 
 class CompanyEmployee(models.Model):
-    company = models.ForeignKey(Company, related_name='company_employee', on_delete=models.CASCADE)
+    company = models.ForeignKey(
+        Company,
+        related_name='company_employee',
+        on_delete=models.CASCADE
+    )
     employee = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     work_start_dt = models.DateField(auto_now_add=False, auto_now=False)
-    work_end_dt = models.DateField(auto_now_add=False, auto_now=False, null=True, blank=True)
+    work_end_dt = models.DateField(
+        auto_now_add=False,
+        auto_now=False,
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return f"<CompanyEmployee id={self.id}>"
 
 
 class Salary(models.Model):
-    company_employee = models.ForeignKey(CompanyEmployee, on_delete=models.CASCADE)
+    company_employee = models.ForeignKey(
+        CompanyEmployee,
+        on_delete=models.CASCADE
+    )
 
     salary = models.PositiveSmallIntegerField()
     month = models.DateField()

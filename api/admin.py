@@ -10,7 +10,9 @@ class CompanyAdmin(admin.ModelAdmin):
     readonly_fields = ('show_employee_url',)
 
     def show_employee_url(self, obj):
-        return format_html('<a href="%s">%s</a>' % (obj.employee_url(), obj.employee_url()))
+        return format_html(
+            '<a href="%s">%s</a>' % (obj.employee_url(), obj.employee_url())
+        )
 
     show_employee_url.allow_tags = True
 
@@ -25,9 +27,11 @@ class EmployeeAdmin(admin.ModelAdmin):
         if salary or salary == 0:
             return salary
 
-        return format_html('Can\'t find any salary information for this person. '
-                           'You can try again: <a href="%s">%s</a>' %
-                           (obj.get_annual_salary_url(), obj.get_annual_salary_url()))
+        return format_html(
+            'Can\'t find any salary information for this person. '
+            'You can try again: <a href="%s">%s</a>' %
+            (obj.get_annual_salary_url(), obj.get_annual_salary_url())
+        )
 
     show_annual_salary.allow_tags = True
 

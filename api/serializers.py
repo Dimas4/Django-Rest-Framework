@@ -42,7 +42,12 @@ class CompanyEmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def get_employee(self, obj):
-        employees = PersonOneSerializer(Person.objects.get(id=obj.employee.id), context={'request': self.context.get("request")})
+        employees = PersonOneSerializer(
+            Person.objects.get(id=obj.employee.id),
+            context={
+                'request': self.context.get("request")
+            }
+        )
         return employees.data
 
 
