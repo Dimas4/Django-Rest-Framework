@@ -55,14 +55,14 @@ class CompanyEmployee(models.Model):
 class Salary(models.Model):
     company_employee = models.ForeignKey(
         CompanyEmployee,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
 
     salary = models.PositiveSmallIntegerField()
     date = models.DateField()
 
     class Meta:
-        unique_together = ("company_employee", "date",)
+        unique_together = ("company_employee", "date")
 
     def __str__(self):
         return f"<Salary salary={self.salary} date={self.date}>"
