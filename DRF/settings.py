@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'api',
+    'custom_command'
 ]
 
 MIDDLEWARE = [
