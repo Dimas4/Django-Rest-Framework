@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'api',
     'custom_command',
 
-    'django_faker'
 ]
 
 
