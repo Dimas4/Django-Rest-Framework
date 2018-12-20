@@ -2,13 +2,14 @@ import random
 
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+
+from factory_boy.factory_utils import generate_objects
 from factory_boy.factory_model import (
     CompanyEmployeeFactory,
     CompanyFactory,
     PersonFactory,
     SalaryFactory
 )
-
 from .exception import NoneValueError
 from .validate import Validate
 from .date import Date
@@ -20,18 +21,29 @@ def generate_salary(count, coef, companies_employees):
 
         current_date = Date.random_date_from_obj(
             company_employee.work_start_dt,
-            company_employee.end_dt
+            company_employee.work_end_dt
         )
         current_date = Date.convert_to_first_day(current_date)
 
         try:
-            SalaryFactory(
+            generate_objects(
+                None,
+                SalaryFactory,
+                many=False,
                 company_employee=company_employee,
                 salary=random.randint(300, 3000),
-                date=current_date
-            )
+                date=current_date)
         except IntegrityError:
             pass
+
+
+def generate_company(count, companies, employees):
+    return [generate_objects(None, CompanyEmployeeFactory,
+                             many=False,
+                             company=random.choice(companies),
+                             supervisor=random.choice(employees),
+                             employee=random.choice(employees),
+                             ) for _ in range(count)]
 
 
 class Command(BaseCommand):
@@ -49,13 +61,13 @@ class Command(BaseCommand):
         company_count = company_count[0]
         employees_count = employees_count[0]
 
-        companies = CompanyFactory.create_batch(company_count)
-        employees = PersonFactory.create_batch(employees_count)
-        companies_employees = CompanyEmployeeFactory.create_batch(
+        companies = generate_objects(company_count, CompanyFactory)
+        employees = generate_objects(employees_count, PersonFactory)
+
+        companies_employees = generate_company(
             employees_count,
-            company=random.choice(companies),
-            supervisor=random .choice(employees),
-            employee=random.choice(employees),
+            companies,
+            employees
         )
         generate_salary(employees_count, 24, companies_employees)
 
