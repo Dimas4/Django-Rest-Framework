@@ -2,7 +2,6 @@ import random
 
 from django.core.management.base import BaseCommand
 
-from factory_boy.factory_utils import generate_objects
 from factory_boy.factory_model import (
     CompanyEmployeeFactory,
     PersonFactory,
@@ -28,24 +27,17 @@ class Command(BaseCommand):
         except TypeError:
             return f'Fields {self.fields} must be integer type'
 
-
         company_count = company_count[0]
         employees_count = employees_count[0]
 
-        companies = generate_objects(company_count, CompanyFactory)
-        employees = generate_objects(employees_count, PersonFactory)
-
-        for _ in range(employees_count):
-            generate_objects(
-                _,
-                CompanyEmployeeFactory,
-                company=random.choice(companies),
-                supervisor=random.choice(employees),
-                employee=random.choice(employees),
-                many=False
-            )
-
-        # salary = SalaryFactory()
+        companies = CompanyFactory.create_batch(company_count)
+        employees = PersonFactory.create_batch(employees_count)
+        CompanyEmployeeFactory.create_batch(
+            employees_count,
+            company=random.choice(companies),
+            supervisor=random.choice(employees),
+            employee=random.choice(employees),
+        )
 
     def add_arguments(self, parser):
         parser.add_argument('-c_c', '--company_count', nargs='+', type=int)

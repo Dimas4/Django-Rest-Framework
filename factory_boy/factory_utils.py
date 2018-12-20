@@ -8,12 +8,6 @@ def clear_database(*args):
         model.objects.all().delete()
 
 
-def generate_objects(count, obj, many=True, **kwargs):
-    if many:
-        return [obj(**kwargs) for _ in range(count)]
-    return obj(**kwargs)
-
-
 def generate_date_or_none():
     return [random.choice([date(
                 year=random.randint(2016, 2018),

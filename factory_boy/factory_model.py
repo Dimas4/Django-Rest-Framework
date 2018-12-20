@@ -55,3 +55,4 @@ class SalaryFactory(factory.django.DjangoModelFactory):
 
     salary = factory.Faker('pyint')
     date = factory.Faker('date_between', start_date="-5y", end_date="today")
+
