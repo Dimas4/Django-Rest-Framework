@@ -36,7 +36,7 @@ class Command(BaseCommand):
         companies_employees = CompanyEmployeeFactory.create_batch(
             employees_count,
             company=random.choice(companies),
-            supervisor=randomgit .choice(employees),
+            supervisor=random .choice(employees),
             employee=random.choice(employees),
         )
         for i in range(employees_count*24):
