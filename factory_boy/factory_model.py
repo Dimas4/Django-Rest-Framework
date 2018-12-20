@@ -40,8 +40,8 @@ class CompanyEmployeeFactory(factory.django.DjangoModelFactory):
 
     work_start_dt = factory.Faker(
         'date_between',
-        start_date="-5y",
-        end_date="today"
+        start_date="-10y",
+        end_date="-4y"
     )
 
     work_end_dt = factory.fuzzy.FuzzyChoice(date_choice)

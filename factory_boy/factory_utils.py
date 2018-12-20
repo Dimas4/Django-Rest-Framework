@@ -16,7 +16,7 @@ def generate_objects(count, obj, many=True, **kwargs):
 
 def generate_date_or_none():
     return [random.choice([date(
-                year=random.randint(2014, 2018),
+                year=random.randint(2016, 2018),
                 month=random.randint(1, 12),
                 day=random.randint(1, 28)
             ), None]
