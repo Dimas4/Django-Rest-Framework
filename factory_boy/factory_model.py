@@ -2,14 +2,14 @@ import factory.fuzzy
 import factory
 
 from api.models import Person, Company, CompanyEmployee, Salary
+from custom_command.management.commands.date import Date
 from .factory_utils import (
-    generate_date_or_none,
     clear_database,
 )
 
 
 clear_database(Person, Company, CompanyEmployee, Salary)
-date_choice = generate_date_or_none()
+date_choice = Date.generate_date_or_none()
 
 
 class PersonFactory(factory.django.DjangoModelFactory):
