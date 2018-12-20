@@ -1,7 +1,5 @@
 import random
 
-from datetime import date
-
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from factory_boy.factory_model import (
@@ -13,7 +11,7 @@ from factory_boy.factory_model import (
 
 from .exception import NoneValueError
 from .validate import Validate
-from faker import Faker
+from .date import Date
 
 
 class Command(BaseCommand):
@@ -39,19 +37,17 @@ class Command(BaseCommand):
             supervisor=random .choice(employees),
             employee=random.choice(employees),
         )
-        for i in range(employees_count*24):
-            faker = Faker()
+
+        for _ in range(employees_count*24):
             company_employee = random.choice(companies_employees)
-            work_start_dt = company_employee.work_start_dt
-            work_end_dt = company_employee.work_end_dt
-            current_date = faker.date_between(
-                start_date=work_start_dt,
-                end_date=work_end_dt if work_end_dt else "today"
+
+            current_date = Date.random_date_from_obj(
+                company_employee.work_start_dt,
+                company_employee.end_dt
             )
-            current_date = date(
-                year=current_date.year,
-                month=current_date.month,
-                day=1)
+
+            current_date = Date.convert_to_first_day(current_date)
+
             try:
                 SalaryFactory(
                     company_employee=random.choice(companies_employees),
