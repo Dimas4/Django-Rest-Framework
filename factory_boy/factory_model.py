@@ -1,12 +1,11 @@
 import factory.fuzzy
 import factory
 
+from api.models import Person, Company, CompanyEmployee, Salary
 from .factory_utils import (
     generate_date_or_none,
     clear_database,
 )
-
-from api.models import Person, Company, CompanyEmployee, Salary
 
 
 clear_database(Person, Company, CompanyEmployee, Salary)
