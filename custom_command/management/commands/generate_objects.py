@@ -7,7 +7,7 @@ from factory_boy.factory_model import (
     PersonFactory,
     CompanyFactory
 )
-from .exception import NoneValueError, LengthObjectError
+from .exception import NoneValueError
 from .validate import Validate
 
 
@@ -19,13 +19,9 @@ class Command(BaseCommand):
         company_count = options.get('company_count')
         employees_count = options.get('employees_count')
         try:
-            Validate.validate(company_count, employees_count, list, [1, 1])
+            Validate.validate(company_count, employees_count)
         except NoneValueError:
             return f'Fields {self.fields} must be defined'
-        except LengthObjectError:
-            return f'Fields {self.fields} must be a single integer'
-        except TypeError:
-            return f'Fields {self.fields} must be integer type'
 
         company_count = company_count[0]
         employees_count = employees_count[0]
