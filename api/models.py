@@ -23,7 +23,7 @@ class Company(models.Model):
         return reverse("admin:api_companyemployee_changelist") + f'?q={self.id}'
 
     def __str__(self):
-        return f"<Company(name={self.name})>"
+        return f"<Company(id={self.id} name={self.name})>"
 
 
 class CompanyEmployee(models.Model):

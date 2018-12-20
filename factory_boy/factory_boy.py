@@ -1,10 +1,13 @@
+import random
 import os
 
 import factory
 import django
 
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "DRF.settings")
 django.setup()
+
 
 from api.models import Person, Company, CompanyEmployee, Salary
 
@@ -12,6 +15,12 @@ from api.models import Person, Company, CompanyEmployee, Salary
 def clear_database(*args):
     for model in args:
         model.objects.all().delete()
+
+
+def generate_objects(count, obj, many=True, **kwargs):
+    if many:
+        return [obj(**kwargs) for _ in range(count)]
+    return obj(**kwargs)
 
 
 clear_database(Person, Company, CompanyEmployee, Salary)
@@ -55,8 +64,21 @@ class SalaryFactory(factory.django.DjangoModelFactory):
     date = factory.Faker('date_between', start_date="-5y", end_date="today")
 
 
-ivan = PersonFactory()
-itechart = CompanyFactory()
-company_employee = CompanyEmployeeFactory()
-salary = SalaryFactory()
+company_count = 5
+employees_count = 20
 
+companies = generate_objects(company_count, CompanyFactory)
+employees = generate_objects(employees_count, PersonFactory)
+
+for _ in range(employees_count):
+    companies_employees = generate_objects(
+        _,
+        CompanyEmployeeFactory,
+        company=random.choice(companies),
+        supervisor=random.choice(employees),
+        employee=random.choice(employees),
+        many=False
+    )
+
+
+# salary = SalaryFactory()
