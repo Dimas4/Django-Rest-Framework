@@ -6,7 +6,7 @@ from factory_boy.factory_model import (
     PersonFactory,
 )
 from .exception import NoneValueError
-from .generate import Generate
+from .factory import Factory
 from .validate import Validate
 
 
@@ -25,16 +25,16 @@ class Command(BaseCommand):
         company_count = company_count[0]
         employees_count = employees_count[0]
 
-        companies = Generate.generate_objects(company_count, CompanyFactory)
-        employees = Generate.generate_objects(employees_count, PersonFactory)
+        companies = Factory.generate_objects(company_count, CompanyFactory)
+        employees = Factory.generate_objects(employees_count, PersonFactory)
 
-        companies_employees = Generate.generate_companies_employees(
+        companies_employees = Factory.generate_companies_employees(
             employees_count,
             CompanyEmployeeFactory,
             companies,
             employees
         )
-        Generate.generate_salary(employees_count, 24, companies_employees)
+        Factory.generate_salary(employees_count, 24, companies_employees)
 
     def add_arguments(self, parser):
         parser.add_argument('-c_c', '--company_count', nargs='+', type=int)

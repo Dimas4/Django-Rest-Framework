@@ -6,7 +6,7 @@ from factory_boy.factory_model import SalaryFactory
 from .date import Date
 
 
-class Generate:
+class Factory:
     @classmethod
     def _generate(cls, count, obj, many=True, **kwargs):
         if many:
