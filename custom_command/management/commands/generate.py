@@ -14,8 +14,8 @@ class Generate:
         return obj(**kwargs)
 
     @classmethod
-    def generate_objects(cls, count, obj_class):
-        return cls._generate(count, obj_class)
+    def generate_objects(cls, count, obj_class, **kwargs):
+        return cls._generate(count, obj_class, **kwargs)
 
     @classmethod
     def generate_companies_employees(
@@ -24,12 +24,12 @@ class Generate:
             obj_class,
             companies,
             employees):
-        return [cls._generate(None, obj_class,
-                              many=False,
-                              company=random.choice(companies),
-                              supervisor=random.choice(employees),
-                              employee=random.choice(employees),
-                              ) for _ in range(count)]
+        return [cls.generate_objects(None, obj_class,
+                                     many=False,
+                                     company=random.choice(companies),
+                                     supervisor=random.choice(employees),
+                                     employee=random.choice(employees),
+                                     ) for _ in range(count)]
 
     @classmethod
     def generate_salary(
@@ -48,7 +48,7 @@ class Generate:
             _current_date = Date.convert_to_first_day(_current_date)
 
             try:
-                cls._generate(
+                cls.generate_objects(
                     None,
                     SalaryFactory,
                     many=False,
