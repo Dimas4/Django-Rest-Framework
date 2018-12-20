@@ -22,9 +22,9 @@ class Date:
     @classmethod
     def generate_date_or_none(cls):
         return [random.choice([date(
-            year=2018,
-            month=random.randint(1, 12),
-            day=1
-        ), None]
-        ) for _ in range(50)
+                    year=2018,
+                    month=random.randint(1, 12),
+                    day=1
+                ), None]
+            ) for _ in range(50)
         ]
