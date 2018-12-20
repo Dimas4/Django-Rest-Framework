@@ -14,6 +14,26 @@ from .validate import Validate
 from .date import Date
 
 
+def generate_salary(count, coef, companies_employees):
+    for _ in range(count * coef):
+        company_employee = random.choice(companies_employees)
+
+        current_date = Date.random_date_from_obj(
+            company_employee.work_start_dt,
+            company_employee.end_dt
+        )
+        current_date = Date.convert_to_first_day(current_date)
+
+        try:
+            SalaryFactory(
+                company_employee=company_employee,
+                salary=random.randint(300, 3000),
+                date=current_date
+            )
+        except IntegrityError:
+            pass
+
+
 class Command(BaseCommand):
     help = 'To clear the database and create new database objects'
     fields = ['company_count', 'employees_count']
@@ -37,25 +57,7 @@ class Command(BaseCommand):
             supervisor=random .choice(employees),
             employee=random.choice(employees),
         )
-
-        for _ in range(employees_count*24):
-            company_employee = random.choice(companies_employees)
-
-            current_date = Date.random_date_from_obj(
-                company_employee.work_start_dt,
-                company_employee.end_dt
-            )
-
-            current_date = Date.convert_to_first_day(current_date)
-
-            try:
-                SalaryFactory(
-                    company_employee=random.choice(companies_employees),
-                    salary=random.randint(300, 3000),
-                    date=current_date
-                )
-            except IntegrityError:
-                pass
+        generate_salary(employees_count, 24, companies_employees)
 
     def add_arguments(self, parser):
         parser.add_argument('-c_c', '--company_count', nargs='+', type=int)
