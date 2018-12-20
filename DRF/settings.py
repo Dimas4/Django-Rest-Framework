@@ -28,8 +28,15 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'api',
-    'custom_command'
+    'custom_command',
+
+    'django_faker'
 ]
+
+
+FAKER_LOCALE = None
+FAKER_PROVIDERS = None
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

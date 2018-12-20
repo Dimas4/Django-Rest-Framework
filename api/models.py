@@ -32,6 +32,12 @@ class CompanyEmployee(models.Model):
         related_name='company_employee',
         on_delete=models.CASCADE
     )
+
+    supervisor = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name='supervisor'
+    )
     employee = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     work_start_dt = models.DateField(auto_now_add=False, auto_now=False)
