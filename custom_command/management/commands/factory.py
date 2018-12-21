@@ -43,8 +43,8 @@ class Factory:
             min_=0,
             max_=17):
         """
-        Complex method of creating CompanyEmployeeFactory objects with max
-        employees limit per company
+        Complex method of creating CompanyEmployeeFactory objects with max and
+        min employees limit per company
 
         :param count: objects count
         :param obj_class: new object class. E.g.: CompanyFactory
@@ -122,6 +122,16 @@ class Factory:
             obj_class,
             employees,
             min_):
+        """
+        Validates min parameter and generates objects if it's less
+
+        :param _companies_employees_count: companies employees count
+        :param _companies_employees_list: companies employees list
+        :param obj_class: new objects class
+        :param employees: employees list
+        :param min_: min value
+        :return: None
+        """
         for _company_name, value in _companies_employees_count.items():
             while _companies_employees_count[_company_name][0] < min_:
                 _companies_employees_list.append(
