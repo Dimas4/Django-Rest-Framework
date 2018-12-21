@@ -21,34 +21,42 @@ class Command(BaseCommand):
         :param options: extra attributes
         :return: None
         """
-        company_count = options.get('company_count')
-        employees_count = options.get('employees_count')
-        max_employees_count = options.get('max_employees_count')
+        _company_count = options.get('company_count')
+        _employees_count = options.get('employees_count')
+        _max_employees_count = options.get('max_employees_count')
+        min_employees_count = options.get('min_employees_count')
         try:
-            Validate.validate(company_count, employees_count)
+            Validate.validate(_company_count, _employees_count)
         except ValueError:
             return f'Fields {self.fields} must be defined'
 
-        company_count = company_count[0]
-        employees_count = employees_count[0]
-        max_employees_count = max_employees_count[0]
+        _company_count = _company_count[0]
+        _employees_count = _employees_count[0]
 
-        companies = Factory.generate_objects(company_count, CompanyFactory)
-        employees = Factory.generate_objects(employees_count, PersonFactory)
+        _max_employees_count = None if _max_employees_count is None else _max_employees_count[0]
+        _min_employees_count = None if min_employees_count is None else min_employees_count[0]
 
-        companies_employees, error = Factory.generate_companies_employees(
-            employees_count,
-            CompanyEmployeeFactory,
-            companies,
-            employees,
-            max_employees_count
-        )
+        _companies = Factory.generate_objects(_company_count, CompanyFactory)
+        _employees = Factory.generate_objects(_employees_count, PersonFactory)
 
-        if error:
+        try:
+            _companies_employees, _error = Factory.generate_companies_employees(
+                _employees_count,
+                _companies,
+                _employees,
+                _min_employees_count if _min_employees_count else 0,
+                _max_employees_count if _max_employees_count else _employees_count,
+
+            )
+        except ValueError:
+            print('Invalid limits values!')
+            exit()
+
+        if _error:
             print(f'Invalid maximum limit! Returns only '
-                  f'{len(companies_employees)} elements')
+                  f'{len(_companies_employees)} elements')
 
-        Factory.generate_salary(employees_count, 24, companies_employees)
+        Factory.generate_salary(_employees_count, 24, _companies_employees)
 
     def add_arguments(self, parser):
         """
@@ -60,8 +68,14 @@ class Command(BaseCommand):
         parser.add_argument('-c_c', '--company_count', nargs='+', type=int)
         parser.add_argument('-e_c', '--employees_count', nargs='+', type=int)
         parser.add_argument(
-            '-m_e_c',
+            '-mx_e_c',
             '--max_employees_count',
+            nargs='+',
+            type=int
+        )
+        parser.add_argument(
+            '-mn_e_c',
+            '--min_employees_count',
             nargs='+',
             type=int
         )

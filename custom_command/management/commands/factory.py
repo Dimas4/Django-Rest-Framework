@@ -2,7 +2,7 @@ import random
 
 from django.db.utils import IntegrityError
 
-from factory_boy.factory_model import SalaryFactory
+from factory_boy.factory_model import SalaryFactory, CompanyEmployeeFactory
 from .date import Date
 
 
@@ -38,9 +38,9 @@ class Factory:
     def generate_companies_employees(
             cls,
             count,
-            obj_class,
             companies,
             employees,
+            min_=0,
             max_=17):
         """
         Complex method of creating CompanyEmployeeFactory objects with max
@@ -53,13 +53,17 @@ class Factory:
         :param employees: list of employees (select a random value
                                              for all iterations)
         :param max_: max employees limit per company
+        :param min_: min employees limit per company
         :return: tuple()
                  type(list[0]) -> list(CompanyEmployee object)
                  type(list[1]) -> bool. Indicates a restricted error
                                         False == error
         """
+        if min_ >= max_:
+            raise ValueError
+
         _companies_employees_count = {
-            _company.name: 0 for _company in companies
+            _company.name: [0, _company] for _company in companies
         }
 
         _companies_employees_list = []
@@ -73,7 +77,7 @@ class Factory:
                 _company_name = _company.name
                 _current_company_count = _companies_employees_count.get(
                     _company_name, 0
-                )
+                )[0]
                 _min_max_validate_result = cls.min_max_validate(
                     max_,
                     _current_company_count
@@ -86,9 +90,9 @@ class Factory:
             if _break:
                 break
 
-            _companies_employees_count[_company_name] += 1
+            _companies_employees_count[_company_name][0] += 1
             _companies_employees_list.append(cls.generate_objects(
-                    None, obj_class,
+                    None, CompanyEmployeeFactory,
                     many=False,
                     company=_company,
                     supervisor=random.choice(employees),
@@ -96,10 +100,40 @@ class Factory:
                 )
             )
 
+        if min_:
+            cls.validate_min_employees_count(
+                _companies_employees_count,
+                _companies_employees_list,
+                CompanyEmployeeFactory,
+                employees,
+                min_
+            )
+
         if _break:
             return _companies_employees_list, True
 
-        return _companies_employees_list, None
+        return _companies_employees_list, False
+
+    @classmethod
+    def validate_min_employees_count(
+            cls,
+            _companies_employees_count,
+            _companies_employees_list,
+            obj_class,
+            employees,
+            min_):
+        for _company_name, value in _companies_employees_count.items():
+            while _companies_employees_count[_company_name][0] < min_:
+                _companies_employees_list.append(
+                    cls.generate_objects(
+                        None, obj_class,
+                        many=False,
+                        company=value[1],
+                        supervisor=random.choice(employees),
+                        employee=random.choice(employees),
+                    )
+                )
+                _companies_employees_count[_company_name][0] += 1
 
     @classmethod
     def generate_salary(
