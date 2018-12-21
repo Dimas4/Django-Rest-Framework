@@ -26,7 +26,7 @@ class CompanyOneAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CompanyOneSerializer
 
 
-class PersonsByCompanyIdAPIView(mixins.CreateModelMixin, generics.ListAPIView):
+class EmployeesByCompanyIdAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     serializer_class = CompanyEmployeeSerializer
     pagination_class = LimitOffsetPagination
 

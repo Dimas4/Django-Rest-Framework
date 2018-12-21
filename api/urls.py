@@ -6,7 +6,7 @@ from .views import (
     PersonListAPIView,
     CompanyOneAPIView,
     CompanyListAPIView,
-    PersonsByCompanyIdAPIView,
+    EmployeesByCompanyIdAPIView,
     SalaryListAPIView
 )
 
@@ -24,8 +24,8 @@ urlpatterns = [
             ),
 
     re_path('^company/(?P<id>\d+)/employee$',
-            PersonsByCompanyIdAPIView.as_view(),
-            name='one_employee_by_company_id'),
+            EmployeesByCompanyIdAPIView.as_view(),
+            name='employees_by_company_id'),
 
     path('employee/', PersonListAPIView.as_view(), name='employees'),
 
