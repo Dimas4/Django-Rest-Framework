@@ -23,6 +23,7 @@ class Command(BaseCommand):
         """
         company_count = options.get('company_count')
         employees_count = options.get('employees_count')
+        max_employees_count = options.get('max_employees_count')
         try:
             Validate.validate(company_count, employees_count)
         except ValueError:
@@ -30,16 +31,23 @@ class Command(BaseCommand):
 
         company_count = company_count[0]
         employees_count = employees_count[0]
+        max_employees_count = max_employees_count[0]
 
         companies = Factory.generate_objects(company_count, CompanyFactory)
         employees = Factory.generate_objects(employees_count, PersonFactory)
 
-        companies_employees = Factory.generate_companies_employees(
+        companies_employees, error = Factory.generate_companies_employees(
             employees_count,
             CompanyEmployeeFactory,
             companies,
-            employees
+            employees,
+            max_employees_count
         )
+
+        if error:
+            print(f'Invalid maximum limit! Returns only '
+                  f'{len(companies_employees)} elements')
+
         Factory.generate_salary(employees_count, 24, companies_employees)
 
     def add_arguments(self, parser):
@@ -51,3 +59,9 @@ class Command(BaseCommand):
         """
         parser.add_argument('-c_c', '--company_count', nargs='+', type=int)
         parser.add_argument('-e_c', '--employees_count', nargs='+', type=int)
+        parser.add_argument(
+            '-m_e_c',
+            '--max_employees_count',
+            nargs='+',
+            type=int
+        )

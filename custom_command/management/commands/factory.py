@@ -53,8 +53,10 @@ class Factory:
         :param employees: list of employees (select a random value
                                              for all iterations)
         :param max_: max employees limit per company
-        :return: list()
-                 type(list[0]) -> CompanyEmployee object
+        :return: tuple()
+                 type(list[0]) -> list(CompanyEmployee object)
+                 type(list[1]) -> bool. Indicates a restricted error
+                                        False == error
         """
         _companies_employees_count = {
             _company.name: 0 for _company in companies
@@ -93,7 +95,11 @@ class Factory:
                     employee=random.choice(employees),
                 )
             )
-        return _companies_employees_list
+
+        if _break:
+            return _companies_employees_list, True
+
+        return _companies_employees_list, None
 
     @classmethod
     def generate_salary(
