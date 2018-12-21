@@ -35,10 +35,10 @@ class Factory:
     def generate_salary(
             cls,
             count,
-            coef,
+            coefficient,
             companies_employees,
             salary=(300, 3000)):
-        for _ in range(count * coef):
+        for _ in range(count * coefficient):
             _company_employee = random.choice(companies_employees)
 
             _current_date = Date.random_date_from_obj(

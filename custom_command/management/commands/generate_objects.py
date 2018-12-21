@@ -5,7 +5,6 @@ from factory_boy.factory_model import (
     CompanyFactory,
     PersonFactory,
 )
-from .exception import NoneValueError
 from .factory import Factory
 from .validate import Validate
 
@@ -19,7 +18,7 @@ class Command(BaseCommand):
         employees_count = options.get('employees_count')
         try:
             Validate.validate(company_count, employees_count)
-        except NoneValueError:
+        except ValueError:
             return f'Fields {self.fields} must be defined'
 
         company_count = company_count[0]
