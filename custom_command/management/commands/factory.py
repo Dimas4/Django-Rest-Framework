@@ -47,8 +47,7 @@ class Factory:
         min employees limit per company
 
         :param count: objects count
-        :param obj_class: new object class. E.g.: CompanyFactory
-        :param companies: list of companies (select a random value
+git        :param companies: list of companies (select a random value
                                              for all iterations)
         :param employees: list of employees (select a random value
                                              for all iterations)
