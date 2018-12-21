@@ -50,9 +50,9 @@ class Date:
         """
 
         return [random.choice([date(
-            year=random.randint(*year),
-            month=random.randint(*month),
-            day=1
-        ), None]
-        ) for _ in range(count)
+                    year=random.randint(*year),
+                    month=random.randint(*month),
+                    day=1
+                ), None]
+            ) for _ in range(count)
         ]
