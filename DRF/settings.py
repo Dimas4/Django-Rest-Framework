@@ -33,10 +33,6 @@ INSTALLED_APPS = [
 ]
 
 
-FAKER_LOCALE = None
-FAKER_PROVIDERS = None
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
