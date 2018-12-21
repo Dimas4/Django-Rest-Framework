@@ -75,7 +75,6 @@ class Migration(migrations.Migration):
             model_name='salarycache',
             name='year',
             field=models.PositiveIntegerField(
-                validators=[django.core.validators.MinValueValidator(2000),
-                            django.core.validators.MaxValueValidator(2068)]),
+                validators=[django.core.validators.MinValueValidator(2000)]),
         ),
     ]
