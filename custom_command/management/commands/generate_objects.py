@@ -14,6 +14,13 @@ class Command(BaseCommand):
     fields = ['company_count', 'employees_count']
 
     def handle(self, *args, **options):
+        """
+        Processes the generate_objects control command(fills the database with
+        objects with random values)
+        :param args: args attributes
+        :param options: extra attributes
+        :return: None
+        """
         company_count = options.get('company_count')
         employees_count = options.get('employees_count')
         try:
@@ -36,5 +43,11 @@ class Command(BaseCommand):
         Factory.generate_salary(employees_count, 24, companies_employees)
 
     def add_arguments(self, parser):
+        """
+        Adds new arguments to the command
+
+        :param parser: django.core.management.base.CommandParser object
+        :return: None
+        """
         parser.add_argument('-c_c', '--company_count', nargs='+', type=int)
         parser.add_argument('-e_c', '--employees_count', nargs='+', type=int)

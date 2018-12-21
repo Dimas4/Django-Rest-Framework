@@ -13,6 +13,9 @@ date_choice = Date.generate_date_or_none()
 
 
 class PersonFactory(factory.django.DjangoModelFactory):
+    """
+    factory.django.DjangoModelFactory wrapper over the Person class
+    """
     class Meta:
         model = Person
 
@@ -21,6 +24,9 @@ class PersonFactory(factory.django.DjangoModelFactory):
 
 
 class CompanyFactory(factory.django.DjangoModelFactory):
+    """
+    factory.django.DjangoModelFactory wrapper over the Company class
+    """
     class Meta:
         model = Company
 
@@ -29,6 +35,9 @@ class CompanyFactory(factory.django.DjangoModelFactory):
 
 
 class CompanyEmployeeFactory(factory.django.DjangoModelFactory):
+    """
+    factory.django.DjangoModelFactory wrapper over the CompanyEmployee class
+    """
     class Meta:
         model = CompanyEmployee
 
@@ -46,6 +55,9 @@ class CompanyEmployeeFactory(factory.django.DjangoModelFactory):
 
 
 class SalaryFactory(factory.django.DjangoModelFactory):
+    """
+    factory.django.DjangoModelFactory wrapper over the Salary class
+    """
     class Meta:
         model = Salary
 
