@@ -20,11 +20,11 @@ class Date:
         )
 
     @classmethod
-    def generate_date_or_none(cls):
+    def generate_date_or_none(cls, month=(1, 12), year=(2018, 2018), count=50):
         return [random.choice([date(
-                    year=2018,
-                    month=random.randint(1, 12),
-                    day=1
-                ), None]
-            ) for _ in range(50)
+            year=random.randint(*year),
+            month=random.randint(*month),
+            day=1
+        ), None]
+        ) for _ in range(count)
         ]
