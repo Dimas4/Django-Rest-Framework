@@ -40,9 +40,11 @@ class Factory:
             count,
             obj_class,
             companies,
-            employees):
+            employees,
+            max_=17):
         """
-        Complex method of creating CompanyEmployeeFactory objects
+        Complex method of creating CompanyEmployeeFactory objects with max
+        employees limit per company
 
         :param count: objects count
         :param obj_class: new object class. E.g.: CompanyFactory
@@ -50,15 +52,48 @@ class Factory:
                                              for all iterations)
         :param employees: list of employees (select a random value
                                              for all iterations)
+        :param max_: max employees limit per company
         :return: list()
                  type(list[0]) -> CompanyEmployee object
         """
-        return [cls.generate_objects(None, obj_class,
-                                     many=False,
-                                     company=random.choice(companies),
-                                     supervisor=random.choice(employees),
-                                     employee=random.choice(employees),
-                                     ) for _ in range(count)]
+        _companies_employees_count = {}
+        _companies_employees_list = []
+
+        for _company in companies:
+            _companies_employees_count[_company.name] = 0
+
+        for _ in range(count):
+            _min_max_validate_result = _break = False
+            _while_iteration_count = 0
+
+            while not _min_max_validate_result:
+                _company = random.choice(companies)
+                _company_name = _company.name
+                _current_company_count = _companies_employees_count.get(
+                    _company_name, 0
+                )
+                _min_max_validate_result = cls.min_max_validate(
+                    max_,
+                    _current_company_count
+                )
+                _while_iteration_count += 1
+                if _while_iteration_count > len(companies*2):
+                    _break = True
+                    break
+
+            if _break:
+                break
+
+            _companies_employees_count[_company_name] += 1
+            _companies_employees_list.append(cls.generate_objects(
+                    None, obj_class,
+                    many=False,
+                    company=_company,
+                    supervisor=random.choice(employees),
+                    employee=random.choice(employees),
+                )
+            )
+        return _companies_employees_list
 
     @classmethod
     def generate_salary(
@@ -97,3 +132,9 @@ class Factory:
                     date=_current_date)
             except IntegrityError:
                 pass
+
+    @classmethod
+    def min_max_validate(cls, max_, count):
+        if not count < max_:
+            return False
+        return True
