@@ -56,11 +56,11 @@ class Factory:
         :return: list()
                  type(list[0]) -> CompanyEmployee object
         """
-        _companies_employees_count = {}
-        _companies_employees_list = []
+        _companies_employees_count = {
+            _company.name: 0 for _company in companies
+        }
 
-        for _company in companies:
-            _companies_employees_count[_company.name] = 0
+        _companies_employees_list = []
 
         for _ in range(count):
             _min_max_validate_result = _break = False
@@ -135,6 +135,12 @@ class Factory:
 
     @classmethod
     def min_max_validate(cls, max_, count):
+        """
+        Checks that count < max_
+        :param max_: int
+        :param count: int
+        :return: bool
+        """
         if not count < max_:
             return False
         return True
