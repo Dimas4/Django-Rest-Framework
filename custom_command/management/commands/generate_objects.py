@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from factory_boy.factory_model import (
-    CompanyEmployeeFactory,
     CompanyFactory,
     PersonFactory,
 )

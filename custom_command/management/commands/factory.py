@@ -78,12 +78,12 @@ class Factory:
                 _current_company_count = _companies_employees_count.get(
                     _company_name, 0
                 )[0]
-                _min_max_validate_result = cls.min_max_validate(
+                _min_max_validate_result = cls.compare_values(
                     max_,
                     _current_company_count
                 )
                 _while_iteration_count += 1
-                if _while_iteration_count > len(companies*2):
+                if _while_iteration_count > len(companies*10):
                     _break = True
                     break
 
@@ -184,13 +184,13 @@ class Factory:
                 pass
 
     @classmethod
-    def min_max_validate(cls, max_, count):
+    def compare_values(cls, first, second):
         """
         Checks that count < max_
-        :param max_: int
-        :param count: int
+        :param first: int
+        :param second: int
         :return: bool
         """
-        if not count < max_:
+        if not second < first:
             return False
         return True
