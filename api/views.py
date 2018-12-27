@@ -6,11 +6,10 @@ from rest_framework import status
 
 from django.db.models import Q
 
-from .validate.exception.exception import SalaryParamsError, WorkDateError
 from api.serializers import SalaryParamsSerializer, WorkDateSerializer
 from .models import Company, Person, CompanyEmployee, Salary
+from .exceptions import SalaryParamsError, WorkDateError
 from celery_tasks.tasks import add_to_salary_cached
-from .validate.validate import Validate
 from .serializers import (
     PersonOneSerializer,
     PersonListSerializer,
@@ -18,6 +17,15 @@ from .serializers import (
     CompanyListSerializer,
     CompanyEmployeeSerializer,
 )
+
+
+class ValidationView:
+    @staticmethod
+    def validate_by_serializer(serializer, exception, data):
+        salary_serializer = serializer(data=data)
+        if not salary_serializer.is_valid():
+            raise exception(errors=salary_serializer.errors)
+        return salary_serializer
 
 
 class CompanyOneAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -84,7 +92,7 @@ class PersonListAPIView(mixins.CreateModelMixin, generics.ListAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class SalaryListAPIView(APIView):
+class SalaryListAPIView(APIView, ValidationView):
     def post(self, request):
         company_employee_id, salary, date = (
             request.POST.get('id'),
@@ -92,7 +100,7 @@ class SalaryListAPIView(APIView):
             request.POST.get('date')
         )
         try:
-            salary_serializer = Validate.validate_by_serializer(
+            salary_serializer = self.validate_by_serializer(
                 SalaryParamsSerializer,
                 SalaryParamsError,
                 data={
@@ -116,7 +124,7 @@ class SalaryListAPIView(APIView):
 
         dt_object = salary_serializer.validated_data['date']
         try:
-            Validate.validate_by_serializer(
+            self.validate_by_serializer(
                 WorkDateSerializer,
                 WorkDateError,
                 data={
